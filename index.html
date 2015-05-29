@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+<link href="jquery-mobile/jquery.mobile.theme-1.3.0.min.css" rel="stylesheet" type="text/css">
+<link href="jquery-mobile/jquery.mobile.structure-1.3.0.min.css" rel="stylesheet" type="text/css">
+<script src="jquery-mobile/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="jquery-mobile/jquery.mobile-1.3.0.min.js" type="text/javascript"></script>
+<link href="jquery-mobile/weather-icon/stylesheet.css" type="text/css" rel="stylesheet">
+
+<script type="text/javascript">
+
+	var icons={
+				'clear-day' : 'B', 
+				'clear-night' : 'C', 
+				'rain': 'R',
+				 'snow' : 'G', 
+				 'sleet' : 'X', 
+				 'wind' : 'S', 
+				 'fog' : 'N', 
+				 'cloudy' : 'Y', 
+				 'partly-cloudy-day' : 'H',
+				 'partly-cloudy-night' : 'I',
+				 'thunderstorm' : '0',
+				 'tornado' :'Z'
+			};
+			
+		var cities={
+				'dhaka' : { coords :{latitude: 23.810332,longitude: 90.412518 }},
+				'barisal' : { coords :{latitude: 22.700000,longitude: 90.366667 }},
+				'chittagonj' : { coords :{latitude: 22.366667,longitude: 91.800000 }},
+				'khulna' : { coords :{latitude: 22.816667,longitude:89.550000 }},
+				'rajshahi' : { coords :{latitude: 24.365159,longitude: 88.600048 }},
+				'rangpur' : { coords :{latitude: 25.743892,longitude: 89.275227 }},
+				'sylhet' : { coords :{latitude: 24.897778, longitude:91.871389 }},
+				'manikganj' : { coords :{latitude: 23.862233, longitude:90.002564 }},
+				'current location' : ''
+			};
+
+	function loadWeatherUpdate(cityCoords)
+	{
+		
+		var latlng=cityCoords.coords.latitude+','+cityCoords.coords.longitude;
+		var weatherUrl="https://api.forecast.io/forecast/434c5c1d40edaaef9d55633f73ba66ee/"+latlng;
+		
+		$.ajax(
+		{
+			url:weatherUrl,
+			jsonpCallback:'jsonpCallback',
+			contentType:'application/json',
+			dataType:'jsonp',
+			success: function(json)
+			{
+				//console.log(json);
+				var celsius=(((json.currently.temperature-32)*5)/9);
+				$('#current_temparature').html(Math.round(celsius)+'&deg;C');
+				$('#current_summary').html(json.currently.summary);
+				$('#current_temparature').attr('data-icon',icons[json.currently.icon]);
+			},
+			error: function(e)
+			{
+				console.log(e.message);
+			}
+			
+		});
+		
+	}
+	function loadCity(city){
+		$('#location').html(city);
+		
+		loadWeatherUpdate(cities[city.toLowerCase()]);
+		};
+
+	$(document).ready(function() {
+        loadCity('Dhaka');
+		$('a.city').bind('click',function(){
+				loadCity($(this).html());
+			});
+    });
+</script>
+</head>
+
+<body>
+<div data-role="page" id="home">
+	<div data-role="panel" id="navPanel">
+    	<ul data-role="listview" data-theme="c">
+        	<li data-icon="delete" data-iconpos="right"><a href="#" data-rel="close" >Close</a></li>
+            <li data-icon="gear" data-iconpos="right" data-role="list-divider">Select a City</li>
+            <li><a href="#" class="city" data-rel="close">Current Location</a></li>
+            <li><a href="#" class="city" data-rel="close">Dhaka</a></li>
+            <li><a href="#" class="city" data-rel="close">Barisal</a></li>
+            <li><a href="#" class="city" data-rel="close">Chittagonj</a></li>
+            <li><a href="#" class="city" data-rel="close">Khulna</a></li>
+            <li><a href="#" class="city" data-rel="close">Rajshahi</a></li>
+            <li><a href="#" class="city" data-rel="close">Rangpur</a></li>
+            <li><a href="#" class="city" data-rel="close">Sylhet</a></li>
+            <li><a href="#" class="city" data-rel="close">Manikganj</a></li>
+        </ul>
+    </div>
+  <div data-role="header" data-position="fixed" data-theme="b">
+    <h1>Weather Update</h1>
+    <a href="#navPanel" data-icon="home" data-iconpos="notext">Home</a>
+    
+  </div>
+  <div data-role="content" class="content">
+  	<h1 id="current_temparature" class="icon" data-icon="C">65&deg;C</h1>
+    <p id="current_summary">Sunsine</p>
+    <p id="location">Current Location</p>
+  </div>
+  <div data-role="footer" data-position="fixed" data-theme="b" >
+    <h4 data-icon="arrow-d">facebook.com/tarekraihan</h4>
+  </div>
+</div>
+
+
+
+
+</body>
+</html>
